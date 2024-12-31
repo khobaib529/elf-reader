@@ -19,6 +19,10 @@ int main(int argc, char *argv[]) {
   elf_data_t elf_data;
   memset(&elf_data, 0, sizeof(elf_data_t));
 
+  if (options.elf_file_path == NULL) {
+    fprintf(stderr, "No file given");
+  }
+
   elf_data.fd = open(options.elf_file_path, O_RDONLY);
   if (elf_data.fd == -1) {
     fprintf(stderr, "Error opening file '%s': %s\n", options.elf_file_path,
@@ -29,7 +33,10 @@ int main(int argc, char *argv[]) {
   parse_elf(&elf_data);
 
   if (options.file_headers == 1) {
-    print_elf_ehdr(STDOUT_FILENO, elf_data.elf_ehdr);
+    print_elf_ehdr(STDOUT_FILENO, &elf_data);
+  }
+  if (options.program_headers == 1) {
+    print_elf_phdr(STDOUT_FILENO, &elf_data);
   }
 
   return 0;
